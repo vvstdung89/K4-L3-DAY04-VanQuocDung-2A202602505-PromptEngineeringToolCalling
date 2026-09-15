@@ -1,7 +1,101 @@
 {
   "dataset_id": "day04_v3_helpdesk_group",
   "dataset_role": "group",
-  "description": "Template intentionally left empty. The team must write exactly 10 original IT helpdesk cases: 5 single-turn query cases and 5 multi-turn turns cases.",
+  "description": "10 original IT helpdesk cases authored by the team: 5 single-turn and 5 multi-turn. Covers ambiguous intent that forces clarification, device ID correction or a change of decision across turns, cancellation of a pending action, and IT policy lookup combined with a confirmed ticket-creation request.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_ambiguous_device_location", "phase": "B", "suite": "group",
+      "query": "Máy tính bàn ở khu vực lễ tân bị treo, không mở được ứng dụng, kiểm tra giúp mình với.",
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "text"}}]},
+      "metadata": {"skill": "clarify_asset_by_location", "difficulty": "medium", "what_it_tests": "Mô tả vị trí không phải asset ID; agent phải hỏi mã tài sản, không tự suy đoán hoặc chọn đại một máy trong kho."}
+    },
+    {
+      "id": "G02_ambiguous_environment_wifi", "phase": "B", "suite": "group",
+      "query": "Wi-Fi ở môi trường sandbox nội bộ của phòng QA có ổn định không?",
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "choice", "options": ["production", "staging"]}}]},
+      "metadata": {"skill": "clarify_environment_informal_name", "difficulty": "medium", "what_it_tests": "Tên môi trường không chính thức (sandbox) không được map ngầm định sang production hay staging; phải hỏi lại bằng choice."}
+    },
+    {
+      "id": "G03_cancel_no_pending_action", "phase": "B", "suite": "group",
+      "query": "Hủy giúp mình yêu cầu tạo ticket lúc nãy nhé, mình đổi ý rồi, không cần tạo nữa.",
+      "failure_type": "unnecessary_tool",
+      "expect": {"no_tool": true, "behavior": "acknowledge_cancel_without_context"},
+      "metadata": {"skill": "cancel_without_prior_context", "difficulty": "medium", "what_it_tests": "Không có ticket hay xác nhận nào trong hội thoại này; agent phải xác nhận đã hiểu yêu cầu hủy, không bịa việc tạo/kiểm tra ticket, không gọi clarify hay create_ticket."}
+    },
+    {
+      "id": "G04_self_correct_cancel_within_query", "phase": "B", "suite": "group",
+      "query": "Kiểm tra bảo mật máy LT-411 giúp mình... à thôi khỏi, không cần kiểm tra nữa, cảm ơn bạn.",
+      "failure_type": "unnecessary_tool",
+      "expect": {"no_tool": true, "behavior": "answer_without_tool"},
+      "metadata": {"skill": "cancel_mid_sentence", "difficulty": "medium", "what_it_tests": "Yêu cầu ban đầu bị người dùng tự hủy ngay trong cùng một câu; agent phải theo ý sau cùng và không gọi inspect_device."}
+    },
+    {
+      "id": "G05_policy_then_confirmed_ticket", "phase": "B", "suite": "group",
+      "query": "Theo chính sách phân loại sự cố, một phòng ban bị chặn hoàn toàn nên đặt priority nào? Mình xác nhận tạo ticket priority high cho máy in PR-404 bị ngừng hoạt động, ảnh hưởng cả phòng Thiết kế.",
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [
+        {"name": "policy", "args": {"policy_area": "incident_response"}},
+        {"name": "create_ticket", "args": {"asset_id": "PR-404", "priority": "high", "confirmed": true}}
+      ]},
+      "metadata": {"skill": "policy_lookup_plus_confirmed_ticket", "difficulty": "hard", "what_it_tests": "Một lượt vừa hỏi chính sách phân loại mức độ vừa xác nhận rõ payload tạo ticket; agent phải gọi cả policy và create_ticket(confirmed=true) đúng asset/priority, không hỏi lại xác nhận thừa."}
+    },
+    {
+      "id": "G06_multiturn_asset_correction", "phase": "B", "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Kiểm tra network trên máy LT-240 giúp mình."},
+        {"role": "user", "content": "Khoan đã, mã đúng phải là DT-087 mới đúng."},
+        {"role": "user", "content": "Giúp mình xem luôn phần hardware của máy đó."}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "inspect_device", "args": {"asset_id": "DT-087", "check": "hardware"}}]},
+      "metadata": {"skill": "multiturn_asset_id_correction", "difficulty": "hard", "what_it_tests": "Mã tài sản bị sửa ở lượt hai phải thắng mã cũ; check mới nhất (hardware) áp dụng cho đúng máy đã sửa."}
+    },
+    {
+      "id": "G07_multiturn_decision_change_ticket_to_check", "phase": "B", "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Mình muốn tạo ticket cho máy DT-031 bị treo."},
+        {"role": "user", "content": "Thôi, đổi ý rồi, để mình kiểm tra tình trạng máy đó trước đã, chưa cần tạo ticket vội."},
+        {"role": "user", "content": "Chỉ cần xem phần hardware của DT-031 thôi."}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "inspect_device", "args": {"asset_id": "DT-031", "check": "hardware"}}]},
+      "metadata": {"skill": "multiturn_decision_change_action_type", "difficulty": "hard", "what_it_tests": "Người dùng đổi quyết định từ tạo ticket sang chỉ kiểm tra máy; agent không được clarify xác nhận ticket cũ hay tạo ticket, chỉ inspect_device theo ý mới nhất."}
+    },
+    {
+      "id": "G08_multiturn_cancel_vpn_ticket", "phase": "B", "suite": "group",
+      "turns": [
+        {"role": "user", "content": "VPN trên máy LT-411 cứ rớt kết nối, tạo ticket priority high giúp mình."},
+        {"role": "user", "content": "Thôi, không cần tạo ticket nữa, để mình báo trực tiếp cho IT."},
+        {"role": "user", "content": "Chỉ cần xác nhận là bạn đã dừng yêu cầu trên, không cần làm gì thêm."}
+      ],
+      "failure_type": "unnecessary_tool",
+      "expect": {"no_tool": true, "behavior": "answer_without_tool"},
+      "metadata": {"skill": "multiturn_cancel_ticket_request", "difficulty": "hard", "what_it_tests": "Yêu cầu hủy ở lượt sau phải thắng yêu cầu tạo ticket ban đầu; không gọi clarify hay create_ticket."}
+    },
+    {
+      "id": "G09_multiturn_policy_then_confirmed_ticket", "phase": "B", "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Theo policy nội bộ, tạo ticket có bắt buộc phải xác nhận không?"},
+        {"role": "user", "content": "Mình muốn tạo ticket priority medium cho lỗi Wi-Fi chập chờn trên máy DT-087."},
+        {"role": "user", "content": "Đúng rồi, mình xác nhận tạo ticket đó."}
+      ],
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [{"name": "create_ticket", "args": {"asset_id": "DT-087", "priority": "medium", "confirmed": true}}]},
+      "metadata": {"skill": "multiturn_policy_then_confirmed_ticket", "difficulty": "hard", "what_it_tests": "Lượt đầu chỉ hỏi chính sách (không tạo gì); sau khi người dùng nêu payload và xác nhận rõ ở lượt cuối, agent mới được gọi create_ticket đúng asset/priority."}
+    },
+    {
+      "id": "G10_multiturn_still_missing_asset", "phase": "B", "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Mình cần hỗ trợ máy tính bị lỗi mạng."},
+        {"role": "user", "content": "Máy ở phòng Nhân sự, mình không nhớ rõ mã tài sản."},
+        {"role": "user", "content": "Bạn giúp kiểm tra ngay được không?"}
+      ],
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "text"}}]},
+      "metadata": {"skill": "multiturn_still_missing_identifier", "difficulty": "hard", "what_it_tests": "Qua nhiều lượt vẫn không có asset ID hợp lệ; agent không được đoán mã theo phòng ban, phải tiếp tục clarify."}
+    }
+  ]
 }
