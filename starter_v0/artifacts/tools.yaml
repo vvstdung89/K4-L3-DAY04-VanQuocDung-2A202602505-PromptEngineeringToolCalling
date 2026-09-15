@@ -23,7 +23,7 @@ tools:
       type: object
       properties:
         query: {type: string, default: "", description: "Nội dung cần tìm"}
-        category: {type: string, enum: [all, vpn, email, wifi, printing, account, security, hardware, software, meeting_room], default: "all", description: "Nhóm hướng dẫn"}
+        category: {type: string, enum: [all, vpn, email, wifi, printing, account, security, hardware, software, meeting_room], default: "all", description: "Bắt buộc truyền rõ ở mọi lượt gọi, không để trống. Nếu câu hỏi nêu rõ chủ đề, dùng đúng giá trị đó: Outlook/webmail/mail client => email (không phải software); Wi-Fi => wifi; VPN => vpn; máy in => printing; đăng nhập/mật khẩu/khoá tài khoản => account; mã độc/quyền truy cập => security; thiết bị vật lý (pin, ổ cứng) => hardware; cài đặt/ứng dụng nói chung không phải mail client => software; phòng họp => meeting_room. Chỉ dùng 'all' khi câu hỏi chung chung, không thuộc chủ đề cụ thể nào."}
         top_k: {type: integer, default: 3, description: "Số kết quả"}
       required: [query]
 
@@ -42,7 +42,7 @@ tools:
       type: object
       properties:
         asset_id: {type: string, description: "Mã tài sản dạng PREFIX-NUMBER. Không bịa. Không dùng employee ID."}
-        check: {type: string, enum: [all, network, vpn, security, hardware, software], default: "all", description: "Nhóm kiểm tra"}
+        check: {type: string, enum: [all, network, vpn, security, hardware, software], default: "all", description: "Bắt buộc truyền rõ ở mọi lượt gọi, không để trống. Nếu người dùng nêu rõ subsystem (vpn, network, security, hardware, software), dùng đúng giá trị đó. Chỉ dùng 'all' khi người dùng yêu cầu kiểm tra tổng thể, không nêu subsystem cụ thể."}
       required: [asset_id]
 
   - name: lookup_user
@@ -91,12 +91,12 @@ tools:
       type: object
       properties:
         query: {type: string, default: "", description: "Nội dung cần tìm"}
-        policy_area: {type: string, enum: [all, access_control, data_privacy, external_tools, incident_response, service_operations, ticketing], default: "all", description: "Nhóm chính sách"}
+        policy_area: {type: string, enum: [all, access_control, data_privacy, external_tools, incident_response, service_operations, ticketing], default: "all", description: "Bắt buộc truyền rõ ở mọi lượt gọi, không để trống. Ánh xạ chủ đề: phân loại mức độ/ưu tiên sự cố => incident_response; đăng nhập/quyền truy cập/khoá tài khoản => access_control; dữ liệu cá nhân/riêng tư => data_privacy; công cụ/dịch vụ bên ngoài => external_tools; vận hành/uptime dịch vụ => service_operations; tạo/theo dõi ticket => ticketing. Chỉ dùng 'all' khi câu hỏi chung chung, không thuộc chủ đề cụ thể nào."}
         top_k: {type: integer, default: 3, description: "Số mục"}
       required: [query]
 
   - name: create_ticket
-    description: "Tạo một ticket hỗ trợ. Đây là hành động ghi dữ liệu. Không gọi tool này để hỏi xác nhận — dùng clarify(response_type=yes_no) trước, tóm tắt đúng summary/priority/asset_id sẽ tạo. Chỉ gọi create_ticket với confirmed=true sau khi người dùng đã trả lời đồng ý rõ ràng cho đúng payload đó trong lượt trước. Nếu summary, priority hoặc asset_id đổi sau khi đã xác nhận, xác nhận cũ hết hiệu lực — phải clarify lại trước khi gọi lại."
+    description: "Tạo một ticket hỗ trợ. Đây là hành động ghi dữ liệu. Không gọi tool này để hỏi xác nhận — dùng clarify(response_type=yes_no) trước, tóm tắt đúng summary/priority/asset_id sẽ tạo. Chỉ gọi create_ticket với confirmed=true sau khi người dùng đã trả lời đồng ý rõ ràng cho đúng payload đó trong lượt trước, hoặc khi chính câu hiện tại của người dùng đã nêu rõ xác nhận (vd 'tôi xác nhận', 'mình xác nhận') cho đúng payload vừa mô tả — khi đó gọi create_ticket(confirmed=true) ngay, không hỏi lại clarify thừa. Nếu summary, priority hoặc asset_id đổi sau khi đã xác nhận, xác nhận cũ hết hiệu lực — phải clarify lại trước khi gọi lại."
     parameters:
       type: object
       properties:
