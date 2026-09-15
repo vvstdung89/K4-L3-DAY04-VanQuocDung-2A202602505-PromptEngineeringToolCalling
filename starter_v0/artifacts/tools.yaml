@@ -91,12 +91,12 @@ tools:
       type: object
       properties:
         query: {type: string, default: "", description: "Nội dung cần tìm"}
-        policy_area: {type: string, enum: [all, access_control, data_privacy, external_tools, incident_response, service_operations, ticketing], default: "all", description: "Nhóm chính sách"}
+        policy_area: {type: string, enum: [all, access_control, data_privacy, external_tools, incident_response, service_operations, ticketing], default: "all", description: "Bắt buộc truyền rõ ở mọi lượt gọi, không để trống. Ánh xạ chủ đề: phân loại mức độ/ưu tiên sự cố => incident_response; đăng nhập/quyền truy cập/khoá tài khoản => access_control; dữ liệu cá nhân/riêng tư => data_privacy; công cụ/dịch vụ bên ngoài => external_tools; vận hành/uptime dịch vụ => service_operations; tạo/theo dõi ticket => ticketing. Chỉ dùng 'all' khi câu hỏi chung chung, không thuộc chủ đề cụ thể nào."}
         top_k: {type: integer, default: 3, description: "Số mục"}
       required: [query]
 
   - name: create_ticket
-    description: "Tạo một ticket hỗ trợ. Đây là hành động ghi dữ liệu. Không gọi tool này để hỏi xác nhận — dùng clarify(response_type=yes_no) trước, tóm tắt đúng summary/priority/asset_id sẽ tạo. Chỉ gọi create_ticket với confirmed=true sau khi người dùng đã trả lời đồng ý rõ ràng cho đúng payload đó trong lượt trước. Nếu summary, priority hoặc asset_id đổi sau khi đã xác nhận, xác nhận cũ hết hiệu lực — phải clarify lại trước khi gọi lại."
+    description: "Tạo một ticket hỗ trợ. Đây là hành động ghi dữ liệu. Không gọi tool này để hỏi xác nhận — dùng clarify(response_type=yes_no) trước, tóm tắt đúng summary/priority/asset_id sẽ tạo. Chỉ gọi create_ticket với confirmed=true sau khi người dùng đã trả lời đồng ý rõ ràng cho đúng payload đó trong lượt trước, hoặc khi chính câu hiện tại của người dùng đã nêu rõ xác nhận (vd 'tôi xác nhận', 'mình xác nhận') cho đúng payload vừa mô tả — khi đó gọi create_ticket(confirmed=true) ngay, không hỏi lại clarify thừa. Nếu summary, priority hoặc asset_id đổi sau khi đã xác nhận, xác nhận cũ hết hiệu lực — phải clarify lại trước khi gọi lại."
     parameters:
       type: object
       properties:
