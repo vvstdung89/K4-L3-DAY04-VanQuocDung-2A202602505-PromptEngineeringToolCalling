@@ -60,7 +60,7 @@ total_cases`, và tool result error đã được review thủ công.
 | v0 | baseline, chưa sửa `system_prompt.md` / `tools.yaml` | Đo hành vi starter trên đúng 30 case IT | case_accuracy | — | 0.70 (21/30) | `runs/v0_B_base_openai_20260915T181212818705.json` |
 | v1 | Rule missing-info trong prompt; siết mô tả `clarify` / `inspect_device` / `lookup_user` / `check_service_status`. Không đụng confirm ticket hay `check=vpn`. | Thiếu asset ID / EMP-ID / environment hợp lệ thì chỉ `clarify`; không đoán `laptop`/`Sales` hay map môi trường lạ | case_accuracy | 0.70 (21/30) | 0.8333 (25/30) | `runs/v1_B_base_openai_20260915T190124705015.json` |
 | v2 | Thêm mục "Confirm before write actions" vào `system_prompt.md`; siết mô tả `create_ticket`/`confirmed` trong `tools.yaml`. Không đụng phần missing-info hay routing của v1. | `create_ticket` là write action nên phải `clarify(response_type=yes_no)` với đúng payload (summary/priority/asset_id) trước khi `confirmed=true`; đổi payload sau khi đã xác nhận thì xác nhận cũ hết hiệu lực, phải hỏi lại | wrong_boundary_failures | 3 (H12, M05, M09) | 0 | `runs/v2_B_base_openai_20260915T193928048574.json` |
-| v3 |  |  |  |  |  |  |
+| v3 | Thêm mục "Scope arguments" vào `system_prompt.md` (bắt buộc truyền rõ `check`/`category`, chọn đúng subsystem/topic thay vì bỏ trống hoặc mặc định `all`); siết mô tả `check` (`inspect_device`) và `category` (`search_kb`) trong `tools.yaml` kèm ví dụ ánh xạ chủ đề mơ hồ (Outlook/webmail => `email`, không phải `software`). Không đụng rule confirm hay missing-info của v1/v2. | Model bỏ trống hoặc để mặc định `all` cho `check`/`category` dù người dùng đã nêu rõ subsystem/topic (vpn/wifi/email); ép luôn truyền rõ giá trị + cho ví dụ ánh xạ sẽ hết `wrong_tool` do sai arg | wrong_tool_failures | 5 (H02, H03, H13, H17, M06) | 0 | `runs/v3_B_base_openai_20260915T195752729223.json` (lặp lại ổn định ở `runs/v3_B_base_openai_20260915T195836852214.json`, cả 2 lần case_accuracy = 1.0, 30/30) |
 
 ## B2. Failure analysis
 
@@ -70,9 +70,12 @@ total_cases`, và tool result error đã được review thủ công.
 | H10 | missing_info | v0: `inspect_device(asset_id=laptop)`. v1: `clarify(response_type=text)` | Thiếu asset ID phải hỏi, không đoán `laptop`. | v1 PASS. |
 | H11 | missing_info | v0: `lookup_user(employee_id=Sales)`. v1: `clarify(response_type=text)` | Thiếu EMP-ID phải hỏi, không dùng tên phòng ban. | v1 PASS. |
 | H19 | missing_info | v0: `check_service_status(email, staging)`. v1: `clarify(choice, [production, staging])` | Môi trường không thuộc enum phải hỏi, không map tên lạ. | v1 PASS. |
-| H13 | sai input (tool đúng) | v0: inspect thiếu `check=vpn`. v1: `inspect_device(LT-204, check=vpn)` PASS | Không nằm trong giả thuyết v1. | Để v3: bắt buộc `check` khi user nêu VPN/Wi-Fi/security. |
+| H13 | wrong_tool (sai arg, tool đúng) | v1/v2: `check_service_status(vpn, production)` + `inspect_device(LT-204)` thiếu `check=vpn` | Routing đúng; `check` bị bỏ trống thay vì khớp subsystem VPN đã nêu. | v3: rule "Scope arguments" ép luôn truyền `check`/`category` rõ ràng, khớp subsystem người dùng nêu. PASS. |
 | H12 | wrong_boundary | `create_ticket(..., confirmed=true)` | Write action không hỏi yes/no. | v2: ticket chỉ sau xác nhận rõ đúng payload. |
-| H02 | wrong_arg_value (regression nhẹ) | v1: `inspect_device(LT-204)` thiếu `check=all` | Routing đúng; omitted default. Không thuộc missing-info. | Không nhồi vào v1; xử lý cùng cụm `check` ở v3. |
+| H02 | wrong_tool (sai arg, tool đúng) | v1/v2 (không ổn định): `inspect_device(LT-204)` thiếu `check=all` | Routing đúng; omitted default do model không luôn set field optional. | v3: bắt buộc luôn truyền `check`/`category` ở mọi lượt gọi. PASS. |
+| H03 | wrong_tool (sai arg, tool đúng) | v2: `search_kb(query=...)` thiếu `category`, hoặc `category=software` (sai). | "Outlook profile" bị hiểu nhầm software thay vì email. | v3: mô tả `category` thêm ví dụ ánh xạ chủ đề mơ hồ (Outlook/webmail => `email`). PASS. |
+| M06 | wrong_tool (sai arg, tool đúng) | v2: `search_kb(query="Wi-Fi", category="all")` | Ngữ cảnh multi-turn đã nói rõ Wi-Fi nhưng vẫn để `category=all`. | v3: rule "Scope arguments" ép chọn topic cụ thể thay vì `all` khi đã nêu rõ. PASS. |
+| H17 | wrong_tool (sai arg, tool đúng) | v2: thiếu `check=vpn` và `category=vpn` trong `inspect_device`/`search_kb` dù `check_service_status` đúng. | Request 3-nguồn (device+status+KB) nhưng 2/3 tool bị bỏ trống arg subsystem. | v3: rule "Scope arguments" + gọi đủ 3 tool với arg khớp subsystem. PASS. |
 
 ## B3. Team eval cases
 

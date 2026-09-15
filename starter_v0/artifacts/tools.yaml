@@ -23,7 +23,7 @@ tools:
       type: object
       properties:
         query: {type: string, default: "", description: "Nội dung cần tìm"}
-        category: {type: string, enum: [all, vpn, email, wifi, printing, account, security, hardware, software, meeting_room], default: "all", description: "Nhóm hướng dẫn"}
+        category: {type: string, enum: [all, vpn, email, wifi, printing, account, security, hardware, software, meeting_room], default: "all", description: "Bắt buộc truyền rõ ở mọi lượt gọi, không để trống. Nếu câu hỏi nêu rõ chủ đề, dùng đúng giá trị đó: Outlook/webmail/mail client => email (không phải software); Wi-Fi => wifi; VPN => vpn; máy in => printing; đăng nhập/mật khẩu/khoá tài khoản => account; mã độc/quyền truy cập => security; thiết bị vật lý (pin, ổ cứng) => hardware; cài đặt/ứng dụng nói chung không phải mail client => software; phòng họp => meeting_room. Chỉ dùng 'all' khi câu hỏi chung chung, không thuộc chủ đề cụ thể nào."}
         top_k: {type: integer, default: 3, description: "Số kết quả"}
       required: [query]
 
@@ -42,7 +42,7 @@ tools:
       type: object
       properties:
         asset_id: {type: string, description: "Mã tài sản dạng PREFIX-NUMBER. Không bịa. Không dùng employee ID."}
-        check: {type: string, enum: [all, network, vpn, security, hardware, software], default: "all", description: "Nhóm kiểm tra"}
+        check: {type: string, enum: [all, network, vpn, security, hardware, software], default: "all", description: "Bắt buộc truyền rõ ở mọi lượt gọi, không để trống. Nếu người dùng nêu rõ subsystem (vpn, network, security, hardware, software), dùng đúng giá trị đó. Chỉ dùng 'all' khi người dùng yêu cầu kiểm tra tổng thể, không nêu subsystem cụ thể."}
       required: [asset_id]
 
   - name: lookup_user
