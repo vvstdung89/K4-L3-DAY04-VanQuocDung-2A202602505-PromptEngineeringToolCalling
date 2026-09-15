@@ -59,7 +59,7 @@ total_cases`, và tool result error đã được review thủ công.
 |---|---|---|---|---:|---:|---|
 | v0 | baseline, chưa sửa `system_prompt.md` / `tools.yaml` | Đo hành vi starter trên đúng 30 case IT | case_accuracy | — | 0.70 (21/30) | `runs/v0_B_base_openai_20260915T181212818705.json` |
 | v1 | Rule missing-info trong prompt; siết mô tả `clarify` / `inspect_device` / `lookup_user` / `check_service_status`. Không đụng confirm ticket hay `check=vpn`. | Thiếu asset ID / EMP-ID / environment hợp lệ thì chỉ `clarify`; không đoán `laptop`/`Sales` hay map môi trường lạ | case_accuracy | 0.70 (21/30) | 0.8333 (25/30) | `runs/v1_B_base_openai_20260915T190124705015.json` |
-| v2 |  |  |  |  |  |  |
+| v2 | Thêm mục "Confirm before write actions" vào `system_prompt.md`; siết mô tả `create_ticket`/`confirmed` trong `tools.yaml`. Không đụng phần missing-info hay routing của v1. | `create_ticket` là write action nên phải `clarify(response_type=yes_no)` với đúng payload (summary/priority/asset_id) trước khi `confirmed=true`; đổi payload sau khi đã xác nhận thì xác nhận cũ hết hiệu lực, phải hỏi lại | wrong_boundary_failures | 3 (H12, M05, M09) | 0 | `runs/v2_B_base_openai_20260915T193928048574.json` |
 | v3 |  |  |  |  |  |  |
 
 ## B2. Failure analysis
