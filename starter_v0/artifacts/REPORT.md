@@ -3,7 +3,7 @@
 - Lĩnh vực tự chọn: IT Helpdesk (Northstar Labs, dữ liệu giả lập của starter)
 - Nhiệm vụ và luồng cơ bản đã chốt trước v0: Trợ lý nội bộ kiểm tra dịch vụ (VPN/email/Wi-Fi...), chẩn đoán thiết bị theo asset ID, tra cứu nhân viên, tìm hướng dẫn KB/policy, hỏi lại khi thiếu thông tin, và chỉ tạo ticket sau khi người dùng xác nhận đúng nội dung. Không đoán mã máy/nhân viên; không đưa dữ liệu nội bộ ra ngoài.
 - Đường dẫn bộ 30 câu cơ bản và 12 câu an toàn; commit chốt bộ trước v0: Giữ nguyên bộ IT có sẵn. 30 câu cơ bản (20 một lượt + 10 nhiều lượt): `starter_v0/data/eval_base.json`. 12 câu an toàn: `starter_v0/data/eval_adversarial.json`. Lệnh v0: `python run_eval.py --provider openai --version v0 --suite base --eval-cases data/eval_base.json`. Bộ case không sửa trước v0; artifact `system_prompt.md` và `tools.yaml` giữ nguyên bản starter khi chạy v0.
-- Chức năng mở rộng ngoài luồng cơ bản (nếu có; tối đa 10 trong tổng 100 điểm): Chưa chốt ở CP1.
+- Chức năng mở rộng ngoài luồng cơ bản (nếu có; tối đa 10 trong tổng 100 điểm): `check_warranty_status` — tool mới tự xây, kiểm tra tình trạng bảo hành thiết bị theo `asset_id` (`in_warranty`/`expiring_soon`/`expired`, tính từ `warranty_until` so với `snapshot_at` trong `helpdesk_data/assets.json`, không dùng dữ liệu mới). Code tại `tools/check_warranty_status/`, khai báo trong `tools.yaml`, test tại `data/eval_bonus_warranty.json` (5 case, `--suite bonus`). Xem B5.
 
 ## Team
 
@@ -35,6 +35,7 @@ Trợ lý IT Helpdesk nội bộ (Northstar Labs, dữ liệu giả lập): ki�
 | policy | Đọc policy nội bộ | core |
 | create_ticket | Tạo ticket sau xác nhận | core |
 | search_device_info | Tra cứu thông tin thiết bị công khai (optional) | optional |
+| check_warranty_status | Kiểm tra tình trạng bảo hành thiết bị theo asset ID | team-built (bonus) |
 
 ## A3. Câu hỏi mẫu
 
@@ -106,9 +107,9 @@ nhóm tự xây.
 
 | Category | Evidence file | What worked | Risk / guardrail |
 |---|---|---|---|
-| Optional built-in |  |  |  |
-| External search + privacy boundary |  |  |  |
-| Bonus: tool mới do nhóm tự xây |  |  |  |
+| Optional built-in | `runs/v2_B_base_openai_20260915T193928048574.json` (create_ticket confirm fix); `runs/bonus_B_extension_gemini_20260915T204345497451.json` (provider_error_cases=0, 10/10 measured) | `create_ticket`: confirm-before-write boundary holds — E05/E08 (E08 multi-turn, priority sửa giữa chừng vẫn giữ đúng payload) PASS, cùng hướng với H12/M05/M09 đã fix từ v2. `policy`: routing đúng 5/5 case cần dùng (E01, E02, E03, E04, E06) | `policy` chưa từng set `policy_area` (luôn để trống/`all`) nên cả 5 case đó fail ở bước args — cùng loại lỗi "quên set field có default" đã ghi ở H02 (inspect_device thiếu `check=all`); cần siết mô tả `policy_area` trong tools.yaml ở vòng kế tiếp |
+| External search + privacy boundary | `runs/bonus_B_extension_gemini_20260915T204345497451.json` | `search_device_info` PASS 2/2 (E09, E10). E10 gọi `inspect_device(asset_id=LT-204, check=hardware)` rồi `search_device_info(manufacturer=Lenovo, model="ThinkPad T14 Gen 4", query_type=specs)` — asset_id không lọt sang external call | Chỉ gửi `manufacturer`/`model`/`query_type` ra Tavily; `official_domains` trả về đúng domain hãng (`support.lenovo.com`, `psref.lenovo.com`), không có domain lạ |
+| Bonus: tool mới do nhóm tự xây | `runs/bonus_B_bonus_gemini_20260915T203538988702.json` (provider_error_cases=0, 5/5 measured) | `check_warranty_status` (mới, đọc `helpdesk_data/assets.json`, không thêm dữ liệu giả): routing đúng 5/5 (W01–W05); 4/5 case PASS — phân biệt đúng `in_warranty` (LT-204, 150 ngày), `expiring_soon` (DT-031, 66 ngày), `expired` (PR-404), và `asset_not_found` cho mã không tồn tại (LT-999) mà không bịa ngày bảo hành | 1 fail (W04, thiếu asset_id): agent gọi đúng `clarify` nhưng quên set `response_type=text` — cùng lớp lỗi default-omission như H02/`policy`, không phải lỗi an toàn; tool luôn tính theo `snapshot_at` (không dùng đồng hồ hệ thống) nên kết quả ổn định qua nhiều lần chạy |
 
 ## B6. Safety review
 
