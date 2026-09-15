@@ -1,39 +1,46 @@
 # Day 04 Lab v3 Report — Trợ lý AI của nhóm
 
-- Lĩnh vực tự chọn:
-- Nhiệm vụ và luồng cơ bản đã chốt trước v0:
-- Đường dẫn bộ 30 câu cơ bản và 12 câu an toàn; commit chốt bộ trước v0:
-- Chức năng mở rộng ngoài luồng cơ bản (nếu có; tối đa 10 trong tổng 100 điểm):
+- Lĩnh vực tự chọn: IT Helpdesk (Northstar Labs, dữ liệu giả lập của starter)
+- Nhiệm vụ và luồng cơ bản đã chốt trước v0: Trợ lý nội bộ kiểm tra dịch vụ (VPN/email/Wi-Fi...), chẩn đoán thiết bị theo asset ID, tra cứu nhân viên, tìm hướng dẫn KB/policy, hỏi lại khi thiếu thông tin, và chỉ tạo ticket sau khi người dùng xác nhận đúng nội dung. Không đoán mã máy/nhân viên; không đưa dữ liệu nội bộ ra ngoài.
+- Đường dẫn bộ 30 câu cơ bản và 12 câu an toàn; commit chốt bộ trước v0: Giữ nguyên bộ IT có sẵn. 30 câu cơ bản (20 một lượt + 10 nhiều lượt): `starter_v0/data/eval_base.json`. 12 câu an toàn: `starter_v0/data/eval_adversarial.json`. Lệnh v0: `python run_eval.py --provider openai --version v0 --suite base --eval-cases data/eval_base.json`. Bộ case không sửa trước v0; artifact `system_prompt.md` và `tools.yaml` giữ nguyên bản starter khi chạy v0.
+- Chức năng mở rộng ngoài luồng cơ bản (nếu có; tối đa 10 trong tổng 100 điểm): Chưa chốt ở CP1.
 
 ## Team
 
-- Team:
+- Team: Studio.h
 - Thành viên và INDIVIDUAL: [TEAM.md](../../TEAM.md)
-- Members:
-- Provider/model:
+- Members: Văn Quốc Dũng (2A202602505)
+- Provider/model: openai / gpt-4o-mini
 
 # PHẦN A — Giới thiệu agent
 
 ## A1. Agent này làm được gì
 
-> Viết 1–2 câu mô tả capability và giới hạn của agent.
+Trợ lý IT Helpdesk nội bộ (Northstar Labs, dữ liệu giả lập): kiểm tra dịch vụ dùng chung, chẩn đoán thiết bị, tra cứu nhân viên, tìm KB/policy, hỏi lại khi thiếu thông tin, và chỉ tạo ticket sau xác nhận. Không làm việc ngoài helpdesk, không đoán asset/employee ID, không đưa dữ liệu nội bộ ra web.
 
 **Link dùng thử:**
 
-> URL:
+> URL: CLI `python chat.py --provider openai` (UI sẽ bổ sung ở CP4).
 
 ## A2. Tool agent có
 
 | Tool | Chức năng | Core / optional / team-built |
 |---|---|---|
 | clarify | Hỏi bổ sung hoặc xác nhận | core |
-|  |  |  |
+| search_kb | Tìm hướng dẫn nội bộ | core |
+| check_service_status | Trạng thái dịch vụ VPN/email/Wi-Fi... | core |
+| inspect_device | Chẩn đoán một asset ID | core |
+| lookup_user | Tra cứu nhân viên theo employee ID | core |
+| format_incident_report | Format findings đã có | core |
+| policy | Đọc policy nội bộ | core |
+| create_ticket | Tạo ticket sau xác nhận | core |
+| search_device_info | Tra cứu thông tin thiết bị công khai (optional) | optional |
 
 ## A3. Câu hỏi mẫu
 
-1.
-2.
-3.
+1. Dịch vụ VPN production hiện có đang gặp sự cố không?
+2. Kiểm tra riêng kết nối VPN trên LT-204.
+3. Tạo ticket mức high cho lỗi VPN trên LT-204 giúp mình.
 
 ## A4. Kịch bản demo đã rehearse
 
@@ -50,8 +57,8 @@ total_cases`, và tool result error đã được review thủ công.
 
 | Version | Prompt/tool change | Hypothesis | Metric | Before | After | Run file |
 |---|---|---|---|---:|---:|---|
-| v0 | baseline |  |  |  |  |  |
-| v1 |  |  |  |  |  |  |
+| v0 | baseline, chưa sửa `system_prompt.md` / `tools.yaml` | Đo hành vi starter trên đúng 30 case IT | case_accuracy | — | 0.70 (21/30) | `runs/v0_B_base_openai_20260915T181212818705.json` |
+| v1 | Rule missing-info trong prompt; siết mô tả `clarify` / `inspect_device` / `lookup_user` / `check_service_status`. Không đụng confirm ticket hay `check=vpn`. | Thiếu asset ID / EMP-ID / environment hợp lệ thì chỉ `clarify`; không đoán `laptop`/`Sales` hay map môi trường lạ | case_accuracy | 0.70 (21/30) | 0.8333 (25/30) | `runs/v1_B_base_openai_20260915T190124705015.json` |
 | v2 |  |  |  |  |  |  |
 | v3 |  |  |  |  |  |  |
 
@@ -59,7 +66,13 @@ total_cases`, và tool result error đã được review thủ công.
 
 | Case ID | Failure type | Actual calls | What failed | Fix |
 |---|---|---|---|---|
-|  |  |  |  |  |
+| H04 | wrong_tool (khác tool error) | v0: `lookup_user(EMP-1003)` + `inspect_device(asset_id=EMP-1003)`. v1: chỉ `lookup_user(EMP-1003)` | Đúng directory lookup nhưng gọi thêm inspect bằng EMP-ID. | v1 PASS. |
+| H10 | missing_info | v0: `inspect_device(asset_id=laptop)`. v1: `clarify(response_type=text)` | Thiếu asset ID phải hỏi, không đoán `laptop`. | v1 PASS. |
+| H11 | missing_info | v0: `lookup_user(employee_id=Sales)`. v1: `clarify(response_type=text)` | Thiếu EMP-ID phải hỏi, không dùng tên phòng ban. | v1 PASS. |
+| H19 | missing_info | v0: `check_service_status(email, staging)`. v1: `clarify(choice, [production, staging])` | Môi trường không thuộc enum phải hỏi, không map tên lạ. | v1 PASS. |
+| H13 | sai input (tool đúng) | v0: inspect thiếu `check=vpn`. v1: `inspect_device(LT-204, check=vpn)` PASS | Không nằm trong giả thuyết v1. | Để v3: bắt buộc `check` khi user nêu VPN/Wi-Fi/security. |
+| H12 | wrong_boundary | `create_ticket(..., confirmed=true)` | Write action không hỏi yes/no. | v2: ticket chỉ sau xác nhận rõ đúng payload. |
+| H02 | wrong_arg_value (regression nhẹ) | v1: `inspect_device(LT-204)` thiếu `check=all` | Routing đúng; omitted default. Không thuộc missing-info. | Không nhồi vào v1; xử lý cùng cụm `check` ở v3. |
 
 ## B3. Team eval cases
 
