@@ -96,12 +96,12 @@ tools:
       required: [query]
 
   - name: create_ticket
-    description: "Tạo một ticket hỗ trợ."
+    description: "Tạo một ticket hỗ trợ. Đây là hành động ghi dữ liệu. Không gọi tool này để hỏi xác nhận — dùng clarify(response_type=yes_no) trước, tóm tắt đúng summary/priority/asset_id sẽ tạo. Chỉ gọi create_ticket với confirmed=true sau khi người dùng đã trả lời đồng ý rõ ràng cho đúng payload đó trong lượt trước. Nếu summary, priority hoặc asset_id đổi sau khi đã xác nhận, xác nhận cũ hết hiệu lực — phải clarify lại trước khi gọi lại."
     parameters:
       type: object
       properties:
         summary: {type: string, default: "", description: "Tóm tắt sự cố"}
         priority: {type: string, enum: [low, medium, high, critical], default: "medium", description: "Mức ưu tiên"}
         asset_id: {type: string, default: "", description: "Mã tài sản nếu có"}
-        confirmed: {type: boolean, default: false, description: "Đã được người dùng xác nhận"}
+        confirmed: {type: boolean, default: false, description: "Chỉ true khi người dùng đã xác nhận rõ ràng qua clarify(yes_no) cho đúng payload hiện tại; nếu chưa hỏi hoặc payload vừa đổi, không gọi create_ticket ở lượt này"}
       required: [summary]
