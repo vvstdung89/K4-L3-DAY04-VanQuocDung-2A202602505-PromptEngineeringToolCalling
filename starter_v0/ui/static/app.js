@@ -1,22 +1,30 @@
 (() => {
   const chatLog = document.getElementById("chat-log");
-  const chatEmpty = document.getElementById("chat-empty");
   const composer = document.getElementById("composer");
   const input = document.getElementById("message-input");
   const sendBtn = document.getElementById("send-btn");
   const resetBtn = document.getElementById("reset-btn");
   const transcriptIdEl = document.getElementById("transcript-id");
+  const versionInput = document.getElementById("version-input");
+  const versionApplyBtn = document.getElementById("version-apply-btn");
+  const artifactVersionBadge = document.getElementById("artifact-version-badge");
 
   const tabChat = document.getElementById("tab-chat");
+  const tabTestcases = document.getElementById("tab-testcases");
   const tabTranscripts = document.getElementById("tab-transcripts");
   const panelChat = document.getElementById("panel-chat");
+  const panelTestcases = document.getElementById("panel-testcases");
   const panelTranscripts = document.getElementById("panel-transcripts");
   const transcriptsList = document.getElementById("transcripts-list");
   const transcriptsView = document.getElementById("transcripts-view");
+  const testcasesList = document.getElementById("testcases-list");
+  const testcasesSearch = document.getElementById("testcases-search");
+  const testcasesFilters = document.getElementById("testcases-filters");
 
   const tplTurn = document.getElementById("tpl-turn");
   const tplRound = document.getElementById("tpl-round");
   const tplCall = document.getElementById("tpl-call");
+  const tplTestcase = document.getElementById("tpl-testcase");
 
   function pretty(value) {
     if (value === undefined) return "";
@@ -77,14 +85,10 @@
 
   input.addEventListener("input", autosize);
 
-  composer.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const message = input.value.trim();
+  async function sendMessage(message) {
     if (!message) return;
-
-    chatEmpty.remove();
-    input.value = "";
-    autosize();
+    const currentEmpty = document.getElementById("chat-empty");
+    if (currentEmpty) currentEmpty.remove();
     sendBtn.disabled = true;
 
     const placeholder = renderTurn(
@@ -110,6 +114,7 @@
       }
       placeholder.remove();
       renderTurn(turnRecord, chatLog);
+      return turnRecord;
     } catch (err) {
       placeholder.remove();
       renderTurn(
@@ -121,11 +126,21 @@
         },
         chatLog
       );
+      return null;
     } finally {
       sendBtn.disabled = false;
       chatLog.scrollTop = chatLog.scrollHeight;
-      input.focus();
     }
+  }
+
+  composer.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const message = input.value.trim();
+    if (!message) return;
+    input.value = "";
+    autosize();
+    await sendMessage(message);
+    input.focus();
   });
 
   input.addEventListener("keydown", (event) => {
@@ -135,29 +150,63 @@
     }
   });
 
-  resetBtn.addEventListener("click", async () => {
-    const res = await fetch("/api/reset", { method: "POST" });
-    const data = await res.json();
+  function applySessionMeta(data, emptyMessage) {
     transcriptIdEl.textContent = data.transcript_id;
+    artifactVersionBadge.textContent = data.artifact_version;
+    versionInput.value = data.artifact_version.split("+")[0];
     chatLog.innerHTML = "";
     const empty = document.createElement("div");
     empty.className = "empty-state";
-    empty.innerHTML = "<p>New conversation started.</p><p class=\"muted\">Send a message to begin.</p>";
+    empty.id = "chat-empty";
+    empty.innerHTML = emptyMessage;
     chatLog.appendChild(empty);
+  }
+
+  resetBtn.addEventListener("click", async () => {
+    const res = await fetch("/api/reset", { method: "POST" });
+    const data = await res.json();
+    applySessionMeta(data, "<p>New conversation started.</p><p class=\"muted\">Send a message to begin.</p>");
+  });
+
+  versionApplyBtn.addEventListener("click", async () => {
+    const version = versionInput.value.trim();
+    if (!version) return;
+    versionApplyBtn.disabled = true;
+    try {
+      const res = await fetch("/api/version", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ version }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "request_failed");
+      applySessionMeta(
+        data,
+        `<p>Switched to <strong>${data.artifact_version}</strong>.</p><p class="muted">system_prompt.md/tools.yaml were re-read from disk.</p>`
+      );
+    } catch (err) {
+      artifactVersionBadge.textContent = `error: ${err.message}`;
+    } finally {
+      versionApplyBtn.disabled = false;
+    }
   });
 
   function switchTab(target) {
-    const showChat = target === "chat";
-    panelChat.classList.toggle("is-hidden", !showChat);
-    panelTranscripts.classList.toggle("is-hidden", showChat);
-    tabChat.classList.toggle("is-active", showChat);
-    tabTranscripts.classList.toggle("is-active", !showChat);
-    tabChat.setAttribute("aria-selected", String(showChat));
-    tabTranscripts.setAttribute("aria-selected", String(!showChat));
-    if (!showChat) loadTranscripts();
+    panelChat.classList.toggle("is-hidden", target !== "chat");
+    panelTestcases.classList.toggle("is-hidden", target !== "testcases");
+    panelTranscripts.classList.toggle("is-hidden", target !== "transcripts");
+    tabChat.classList.toggle("is-active", target === "chat");
+    tabTestcases.classList.toggle("is-active", target === "testcases");
+    tabTranscripts.classList.toggle("is-active", target === "transcripts");
+    tabChat.setAttribute("aria-selected", String(target === "chat"));
+    tabTestcases.setAttribute("aria-selected", String(target === "testcases"));
+    tabTranscripts.setAttribute("aria-selected", String(target === "transcripts"));
+    if (target === "transcripts") loadTranscripts();
+    if (target === "testcases" && !testcasesList.dataset.loaded) loadTestcases();
   }
 
   tabChat.addEventListener("click", () => switchTab("chat"));
+  tabTestcases.addEventListener("click", () => switchTab("testcases"));
   tabTranscripts.addEventListener("click", () => switchTab("transcripts"));
 
   async function loadTranscripts() {
@@ -198,6 +247,87 @@
     }
     data.turns.forEach((turn) => renderTurn(turn, transcriptsView));
   }
+
+  let allTestcases = [];
+  let activeSuite = null;
+
+  function suiteLabel(suite) {
+    return suite || "other";
+  }
+
+  function renderTestcaseFilters() {
+    const suites = [...new Set(allTestcases.map((c) => suiteLabel(c.suite)))].sort();
+    testcasesFilters.innerHTML = "";
+    const makeChip = (value, label) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip" + (activeSuite === value ? " is-active" : "");
+      chip.textContent = label;
+      chip.addEventListener("click", () => {
+        activeSuite = activeSuite === value ? null : value;
+        renderTestcaseFilters();
+        renderTestcaseList();
+      });
+      testcasesFilters.appendChild(chip);
+    };
+    makeChip(null, "All");
+    suites.forEach((suite) => makeChip(suite, suite));
+  }
+
+  function renderTestcaseList() {
+    const query = testcasesSearch.value.trim().toLowerCase();
+    testcasesList.innerHTML = "";
+    const filtered = allTestcases.filter((c) => {
+      if (activeSuite && suiteLabel(c.suite) !== activeSuite) return false;
+      if (!query) return true;
+      const haystack = `${c.id} ${c.query || ""} ${(c.turns || []).map((t) => t.content).join(" ")}`.toLowerCase();
+      return haystack.includes(query);
+    });
+
+    if (!filtered.length) {
+      testcasesList.innerHTML = '<div class="empty-state"><p class="muted">No matching test cases.</p></div>';
+      return;
+    }
+
+    filtered.forEach((testcase) => {
+      const node = tplTestcase.content.cloneNode(true);
+      node.querySelector("[data-id]").textContent = testcase.id;
+      node.querySelector("[data-suite]").textContent = suiteLabel(testcase.suite);
+      if (testcase.is_multiturn) {
+        const turns = testcase.turns || [];
+        node.querySelector("[data-query]").textContent = `${turns.length} turns: "${turns[0]?.content || ""}"...`;
+      } else {
+        node.querySelector("[data-query]").textContent = testcase.query || "";
+      }
+      node.querySelector("[data-what]").textContent = testcase.what_it_tests || "";
+      const runBtn = node.querySelector("[data-run]");
+      runBtn.textContent = testcase.is_multiturn ? "Run all turns" : "Run";
+      runBtn.addEventListener("click", async () => {
+        runBtn.disabled = true;
+        switchTab("chat");
+        if (testcase.is_multiturn) {
+          for (const turn of testcase.turns || []) {
+            await sendMessage(turn.content);
+          }
+        } else {
+          await sendMessage(testcase.query);
+        }
+        runBtn.disabled = false;
+      });
+      testcasesList.appendChild(node);
+    });
+  }
+
+  async function loadTestcases() {
+    testcasesList.innerHTML = '<div class="empty-state"><p class="muted">Loading test cases...</p></div>';
+    const res = await fetch("/api/testcases");
+    allTestcases = await res.json();
+    testcasesList.dataset.loaded = "true";
+    renderTestcaseFilters();
+    renderTestcaseList();
+  }
+
+  testcasesSearch.addEventListener("input", renderTestcaseList);
 
   autosize();
 })();

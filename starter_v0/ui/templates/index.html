@@ -14,14 +14,19 @@
         <span class="topbar-transcript" id="transcript-id">{{ meta.transcript_id }}</span>
       </div>
       <div class="topbar-meta">
-        <span class="badge badge-neutral" title="Artifact version (prompt + tools hash)">{{ meta.artifact_version }}</span>
         <span class="badge badge-outline">{{ meta.provider }}<span class="sep">/</span>{{ meta.model or "default" }}</span>
+        <span class="version-control" title="Change the version label and re-read system_prompt.md/tools.yaml from disk">
+          <input class="version-input" id="version-input" type="text" value="{{ meta.artifact_version.split('+')[0] }}" />
+          <button class="btn btn-ghost btn-small" id="version-apply-btn" type="button">Apply</button>
+        </span>
+        <span class="badge badge-neutral" id="artifact-version-badge" title="Full artifact version (prompt + tools hash)">{{ meta.artifact_version }}</span>
         <button class="btn btn-ghost" id="reset-btn" type="button">New conversation</button>
       </div>
     </header>
 
     <nav class="tabs" role="tablist">
       <button class="tab is-active" id="tab-chat" role="tab" aria-selected="true" type="button">Chat</button>
+      <button class="tab" id="tab-testcases" role="tab" aria-selected="false" type="button">Test cases</button>
       <button class="tab" id="tab-transcripts" role="tab" aria-selected="false" type="button">Transcripts</button>
     </nav>
 
@@ -42,6 +47,16 @@
         ></textarea>
         <button class="btn btn-primary" id="send-btn" type="submit">Send</button>
       </form>
+    </main>
+
+    <main class="panel is-hidden" id="panel-testcases">
+      <div class="testcases-toolbar">
+        <input class="testcases-search" id="testcases-search" type="text" placeholder="Search id or query..." />
+        <div class="chip-row" id="testcases-filters"></div>
+      </div>
+      <div class="testcases-list" id="testcases-list">
+        <div class="empty-state"><p class="muted">Loading test cases...</p></div>
+      </div>
     </main>
 
     <main class="panel is-hidden" id="panel-transcripts">
@@ -100,6 +115,18 @@
         </div>
       </div>
     </div>
+  </template>
+
+  <template id="tpl-testcase">
+    <article class="testcase">
+      <div class="testcase-head">
+        <span class="testcase-id" data-id></span>
+        <span class="testcase-suite" data-suite></span>
+      </div>
+      <div class="testcase-query" data-query></div>
+      <div class="testcase-meta muted" data-what></div>
+      <button class="btn btn-ghost btn-small" data-run type="button">Run</button>
+    </article>
   </template>
 
   <script src="{{ url_for('static', filename='app.js') }}"></script>

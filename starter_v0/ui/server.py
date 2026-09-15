@@ -50,13 +50,27 @@ def new_transcript(config: dict[str, Any]) -> dict[str, Any]:
     return {"transcript": transcript, "transcript_path": path}
 
 
-def init_state(args: argparse.Namespace) -> None:
-    system_prompt = args.system_prompt.read_text(encoding="utf-8")
-    tool_declarations = load_tool_declarations(args.tools)
+def load_artifacts(version_label: str, system_prompt_path: Path, tools_path: Path) -> dict[str, Any]:
+    """Re-read system_prompt.md/tools.yaml from disk and re-tag under version_label.
+
+    Called at startup and from /api/version, so edits made to the artifact
+    files between iterations are picked up without restarting the process.
+    """
+    system_prompt = system_prompt_path.read_text(encoding="utf-8")
+    tool_declarations = load_tool_declarations(tools_path)
     openai_tools = to_openai_tools(tool_declarations)
+    artifact_version = build_artifact_version(version_label, system_prompt_path, tools_path)
+    return {
+        "system_prompt": system_prompt,
+        "openai_tools": openai_tools,
+        "artifact_version": artifact_version,
+    }
+
+
+def init_state(args: argparse.Namespace) -> None:
     provider = make_provider(args.provider)
     selected_model = args.model or getattr(provider, "default_model", None)
-    artifact_version = build_artifact_version(args.version, args.system_prompt, args.tools)
+    artifacts = load_artifacts(args.version, args.system_prompt, args.tools)
 
     config = {
         "provider": args.provider,
@@ -66,13 +80,13 @@ def init_state(args: argparse.Namespace) -> None:
         "transcripts_dir": args.transcripts_dir,
         "history_window": args.history_window,
         "max_tool_rounds": args.max_tool_rounds,
-        "artifact_version": artifact_version,
+        "artifact_version": artifacts["artifact_version"],
     }
 
     STATE.update({
         "config": config,
-        "system_prompt": system_prompt,
-        "openai_tools": openai_tools,
+        "system_prompt": artifacts["system_prompt"],
+        "openai_tools": artifacts["openai_tools"],
         "provider": provider,
         "model": args.model,
         "history": [],
@@ -101,6 +115,24 @@ def api_reset():
     STATE["history"] = []
     STATE["turn_index"] = 0
     STATE.update(new_transcript(STATE["config"]))
+    return jsonify(meta())
+
+
+@app.post("/api/version")
+def api_version():
+    body = request.get_json(silent=True) or {}
+    version_label = (body.get("version") or "").strip()
+    if not version_label:
+        return jsonify({"error": "empty_version"}), 400
+
+    config = STATE["config"]
+    artifacts = load_artifacts(version_label, config["system_prompt_path"], config["tools_path"])
+    config["artifact_version"] = artifacts["artifact_version"]
+    STATE["system_prompt"] = artifacts["system_prompt"]
+    STATE["openai_tools"] = artifacts["openai_tools"]
+    STATE["history"] = []
+    STATE["turn_index"] = 0
+    STATE.update(new_transcript(config))
     return jsonify(meta())
 
 
@@ -193,6 +225,38 @@ def api_transcript_file(name: str):
     if transcripts_dir not in candidate.parents or not candidate.is_file():
         return jsonify({"error": "not_found"}), 404
     return jsonify(json.loads(candidate.read_text(encoding="utf-8")))
+
+
+@app.get("/api/testcases")
+def api_testcases():
+    data_dir = ROOT / "data"
+    if not data_dir.exists():
+        return jsonify([])
+
+    items = []
+    for path in sorted(data_dir.glob("*.json")):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        cases = data.get("cases")
+        if not isinstance(cases, list):
+            continue
+        for case in cases:
+            metadata = case.get("metadata") or {}
+            items.append({
+                "file": path.name,
+                "dataset_id": data.get("dataset_id"),
+                "id": case.get("id"),
+                "suite": case.get("suite") or data.get("dataset_role"),
+                "is_multiturn": "turns" in case,
+                "query": case.get("query"),
+                "turns": case.get("turns"),
+                "failure_type": case.get("failure_type"),
+                "what_it_tests": metadata.get("what_it_tests"),
+                "expect": case.get("expect"),
+            })
+    return jsonify(items)
 
 
 def parse_args() -> argparse.Namespace:
