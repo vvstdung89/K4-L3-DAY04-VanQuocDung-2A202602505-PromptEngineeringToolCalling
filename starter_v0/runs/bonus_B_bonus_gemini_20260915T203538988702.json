@@ -1,0 +1,325 @@
+{
+  "run_id": "bonus_B_bonus_gemini_20260915T203538988702",
+  "version": "bonus",
+  "artifact_version": "bonus+pd7b07ca610be+t70b719f1528f",
+  "prompt_hash": "d7b07ca610be88ba53a8bc90aa02e8916321696c5bf08338784850ff8db5ff7c",
+  "tools_hash": "70b719f1528f690ca4279407a5d201f726b77e1d988e6315324506b24eaa9e5e",
+  "phase": "B",
+  "suite": "bonus",
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-lite",
+  "system_prompt": "/home/kant/Projects/Codelab/K4-L3-DAY04-VanQuocDung-2A202602505-PromptEngineeringToolCalling/starter_v0/artifacts/system_prompt.md",
+  "tools": "/home/kant/Projects/Codelab/K4-L3-DAY04-VanQuocDung-2A202602505-PromptEngineeringToolCalling/starter_v0/artifacts/tools.yaml",
+  "eval_cases": "data/eval_bonus_warranty.json",
+  "dataset_id": "day04_v3_helpdesk_bonus_warranty",
+  "dataset_role": "bonus",
+  "description": "Smoke/eval cases for the team-built bonus tool check_warranty_status.",
+  "generated_at": "2026-09-15T20:35:38",
+  "summary": {
+    "total_cases": 5,
+    "measured_cases": 5,
+    "provider_error_cases": 0,
+    "passed_cases": 4,
+    "case_accuracy": 0.8,
+    "tool_routing_accuracy": 1.0,
+    "argument_accuracy": 0.8,
+    "multiturn_accuracy": null,
+    "failure_counts": {
+      "missing_info": 1
+    },
+    "observed_mismatch_counts": {
+      "wrong_arg_value": 1
+    }
+  },
+  "results": [
+    {
+      "id": "W01_in_warranty",
+      "phase": "B",
+      "suite": "bonus",
+      "case_suite": "bonus",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "warranty_lookup",
+        "difficulty": "easy",
+        "what_it_tests": "Còn bảo hành lâu (150 ngày) phải route đúng sang check_warranty_status, không phải inspect_device."
+      },
+      "input": "Laptop LT-204 còn bảo hành không?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "check_warranty_status",
+            "args": {
+              "asset_id": "LT-204"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "check_warranty_status",
+            "args": {
+              "asset_id": "LT-204"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "check_warranty_status",
+          "args": {
+            "asset_id": "LT-204"
+          },
+          "result": {
+            "tool": "check_warranty_status",
+            "asset_id": "LT-204",
+            "manufacturer": "Lenovo",
+            "model": "ThinkPad T14 Gen 4",
+            "warranty_until": "2027-02-11",
+            "as_of": "2026-09-14",
+            "days_remaining": 150,
+            "status": "in_warranty"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W02_expiring_soon",
+      "phase": "B",
+      "suite": "bonus",
+      "case_suite": "bonus",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "warranty_lookup",
+        "difficulty": "easy",
+        "what_it_tests": "Còn 66 ngày (<=90) phải trả về status=expiring_soon."
+      },
+      "input": "Máy bàn DT-031 sắp hết hạn bảo hành chưa?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "check_warranty_status",
+            "args": {
+              "asset_id": "DT-031"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "check_warranty_status",
+            "args": {
+              "asset_id": "DT-031"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "check_warranty_status",
+          "args": {
+            "asset_id": "DT-031"
+          },
+          "result": {
+            "tool": "check_warranty_status",
+            "asset_id": "DT-031",
+            "manufacturer": "HP",
+            "model": "HP EliteDesk 800 G9",
+            "warranty_until": "2026-11-19",
+            "as_of": "2026-09-14",
+            "days_remaining": 66,
+            "status": "expiring_soon"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W03_expired",
+      "phase": "B",
+      "suite": "bonus",
+      "case_suite": "bonus",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "warranty_lookup",
+        "difficulty": "easy",
+        "what_it_tests": "Đã hết bảo hành 32 ngày trước snapshot phải trả về status=expired."
+      },
+      "input": "Kiểm tra bảo hành máy in PR-404 giúp mình, sắp hết hay hết chưa?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "check_warranty_status",
+            "args": {
+              "asset_id": "PR-404"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "check_warranty_status",
+            "args": {
+              "asset_id": "PR-404"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "check_warranty_status",
+          "args": {
+            "asset_id": "PR-404"
+          },
+          "result": {
+            "tool": "check_warranty_status",
+            "asset_id": "PR-404",
+            "manufacturer": "HP",
+            "model": "Color LaserJet Enterprise M555dn",
+            "warranty_until": "2026-08-13",
+            "as_of": "2026-09-14",
+            "days_remaining": -32,
+            "status": "expired"
+          }
+        }
+      ]
+    },
+    {
+      "id": "W04_missing_asset_id",
+      "phase": "B",
+      "suite": "bonus",
+      "case_suite": "bonus",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "warranty_missing_info",
+        "difficulty": "medium",
+        "what_it_tests": "Không có asset ID hợp lệ phải clarify, không đoán và không gọi thẳng check_warranty_status."
+      },
+      "input": "Laptop của tôi còn bảo hành không?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "routing_correct": true,
+        "args_correct": false,
+        "actual_tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "question": "Để kiểm tra bảo hành, bạn vui lòng cung cấp mã tài sản (asset ID) của laptop (ví dụ: LT-123)?"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "wrong_arg_value",
+        "failure_type": "missing_info",
+        "failures": [
+          "response_type: expected 'text', got None"
+        ]
+      },
+      "tool_results": [
+        {
+          "tool": "clarify",
+          "args": {
+            "question": "Để kiểm tra bảo hành, bạn vui lòng cung cấp mã tài sản (asset ID) của laptop (ví dụ: LT-123)?"
+          },
+          "result": {
+            "tool": "clarify",
+            "question": "Để kiểm tra bảo hành, bạn vui lòng cung cấp mã tài sản (asset ID) của laptop (ví dụ: LT-123)?",
+            "response_type": "text",
+            "options": [],
+            "awaiting_user": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "W05_unknown_asset",
+      "phase": "B",
+      "suite": "bonus",
+      "case_suite": "bonus",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "warranty_not_found",
+        "difficulty": "medium",
+        "what_it_tests": "Mã hợp lệ về hình thức nhưng không tồn tại vẫn phải gọi tool (routing đúng); tool tự trả asset_not_found, agent không được tự bịa thông tin bảo hành."
+      },
+      "input": "Kiểm tra bảo hành cho máy LT-999.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "check_warranty_status",
+            "args": {
+              "asset_id": "LT-999"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "check_warranty_status",
+            "args": {
+              "asset_id": "LT-999"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "check_warranty_status",
+          "args": {
+            "asset_id": "LT-999"
+          },
+          "result": {
+            "tool": "check_warranty_status",
+            "asset_id": "LT-999",
+            "error": "asset_not_found"
+          }
+        }
+      ]
+    }
+  ]
+}

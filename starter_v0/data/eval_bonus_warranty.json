@@ -1,0 +1,42 @@
+{
+  "dataset_id": "day04_v3_helpdesk_bonus_warranty",
+  "dataset_role": "bonus",
+  "description": "Smoke/eval cases for the team-built bonus tool check_warranty_status.",
+  "cases": [
+    {
+      "id": "W01_in_warranty", "phase": "B", "suite": "bonus",
+      "query": "Laptop LT-204 còn bảo hành không?",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "check_warranty_status", "args": {"asset_id": "LT-204"}}]},
+      "metadata": {"skill": "warranty_lookup", "difficulty": "easy", "what_it_tests": "Còn bảo hành lâu (150 ngày) phải route đúng sang check_warranty_status, không phải inspect_device."}
+    },
+    {
+      "id": "W02_expiring_soon", "phase": "B", "suite": "bonus",
+      "query": "Máy bàn DT-031 sắp hết hạn bảo hành chưa?",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "check_warranty_status", "args": {"asset_id": "DT-031"}}]},
+      "metadata": {"skill": "warranty_lookup", "difficulty": "easy", "what_it_tests": "Còn 66 ngày (<=90) phải trả về status=expiring_soon."}
+    },
+    {
+      "id": "W03_expired", "phase": "B", "suite": "bonus",
+      "query": "Kiểm tra bảo hành máy in PR-404 giúp mình, sắp hết hay hết chưa?",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "check_warranty_status", "args": {"asset_id": "PR-404"}}]},
+      "metadata": {"skill": "warranty_lookup", "difficulty": "easy", "what_it_tests": "Đã hết bảo hành 32 ngày trước snapshot phải trả về status=expired."}
+    },
+    {
+      "id": "W04_missing_asset_id", "phase": "B", "suite": "bonus",
+      "query": "Laptop của tôi còn bảo hành không?",
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "text"}}]},
+      "metadata": {"skill": "warranty_missing_info", "difficulty": "medium", "what_it_tests": "Không có asset ID hợp lệ phải clarify, không đoán và không gọi thẳng check_warranty_status."}
+    },
+    {
+      "id": "W05_unknown_asset", "phase": "B", "suite": "bonus",
+      "query": "Kiểm tra bảo hành cho máy LT-999.",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "check_warranty_status", "args": {"asset_id": "LT-999"}}]},
+      "metadata": {"skill": "warranty_not_found", "difficulty": "medium", "what_it_tests": "Mã hợp lệ về hình thức nhưng không tồn tại vẫn phải gọi tool (routing đúng); tool tự trả asset_not_found, agent không được tự bịa thông tin bảo hành."}
+    }
+  ]
+}
