@@ -1,0 +1,196 @@
+{
+  "created_at": "2026-09-15T20:34:13.317269+07:00",
+  "method": "Scripted user input to the unmodified live chat.py CLI; real OpenAI provider and local mock tools. Filesystem snapshots taken before and after every session.",
+  "scenarios": [
+    {
+      "scenario": "normal_scoped",
+      "transcript": "transcripts/v3_openai_20260915T203413791610.transcript.json",
+      "artifact_version": "v3+pf1e0d6c67b5c+t2a6b3d38afaf",
+      "turn_count": 2,
+      "statuses": [
+        "answered",
+        "answered"
+      ],
+      "tickets_before": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "tickets_after": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "created_tickets": [],
+      "modified_tickets": [],
+      "deleted_tickets": []
+    },
+    {
+      "scenario": "missing_asset",
+      "transcript": "transcripts/v3_openai_20260915T203425127999.transcript.json",
+      "artifact_version": "v3+pf1e0d6c67b5c+t2a6b3d38afaf",
+      "turn_count": 2,
+      "statuses": [
+        "answered",
+        "answered"
+      ],
+      "tickets_before": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "tickets_after": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "created_tickets": [],
+      "modified_tickets": [],
+      "deleted_tickets": []
+    },
+    {
+      "scenario": "correct_asset",
+      "transcript": "transcripts/v3_openai_20260915T203432459205.transcript.json",
+      "artifact_version": "v3+pf1e0d6c67b5c+t2a6b3d38afaf",
+      "turn_count": 2,
+      "statuses": [
+        "answered",
+        "answered"
+      ],
+      "tickets_before": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "tickets_after": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "created_tickets": [],
+      "modified_tickets": [],
+      "deleted_tickets": []
+    },
+    {
+      "scenario": "ticket_update_confirm",
+      "transcript": "transcripts/v3_openai_20260915T203440694064.transcript.json",
+      "artifact_version": "v3+pf1e0d6c67b5c+t2a6b3d38afaf",
+      "turn_count": 3,
+      "statuses": [
+        "waiting_for_user",
+        "answered",
+        "answered"
+      ],
+      "tickets_before": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "tickets_after": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "created_tickets": [
+        {
+          "ticket_id": "LAB-DBDDA198",
+          "summary": "VPN connection fails on LT-204",
+          "priority": "medium",
+          "asset_id": "LT-204",
+          "created_at": "2026-09-15T13:34:46.389970+00:00",
+          "source": "educational_local_mock"
+        }
+      ],
+      "modified_tickets": [],
+      "deleted_tickets": []
+    },
+    {
+      "scenario": "ticket_cancel",
+      "transcript": "transcripts/v3_openai_20260915T203448927417.transcript.json",
+      "artifact_version": "v3+pf1e0d6c67b5c+t2a6b3d38afaf",
+      "turn_count": 2,
+      "statuses": [
+        "waiting_for_user",
+        "answered"
+      ],
+      "tickets_before": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "tickets_after": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "created_tickets": [],
+      "modified_tickets": [],
+      "deleted_tickets": []
+    }
+  ],
+  "verification": {
+    "turn_count": 11,
+    "provider_error_turns": 0,
+    "max_tool_rounds_turns": 0,
+    "tool_result_errors": [
+      {
+        "turn_index": 2,
+        "tool": "inspect_device",
+        "args": {
+          "asset_id": "LT-205",
+          "check": "vpn"
+        },
+        "error": "asset_not_found"
+      }
+    ],
+    "answered_turns": 9,
+    "answered_with_required_json_fields": 1,
+    "artifact_hashes_match_current_v3": true,
+    "created_ticket_payload_matches_filesystem": true,
+    "report_evidence_links_exist": true,
+    "credential_scan": "No loaded credential values or OpenAI key patterns found in report, transcripts, or audit; inputs and tool outputs reviewed as fictional lab data."
+  }
+}

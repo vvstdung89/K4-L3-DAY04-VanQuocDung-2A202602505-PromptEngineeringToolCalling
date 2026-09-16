@@ -1,0 +1,208 @@
+{
+  "created_at": "2026-09-15T20:41:17.576066+07:00",
+  "method": "Scripted user input to unmodified live chat.py CLI; real OpenAI provider and local mock tools. Original five v3 scenarios replayed unchanged. Ticket SHA-256 snapshots before and after each session.",
+  "scenarios": [
+    {
+      "scenario": "normal_scoped",
+      "transcript": "transcripts/v4_openai_20260915T204117882904.transcript.json",
+      "artifact_version": "v4+p5ce94b364411+tcb2a07133480",
+      "turn_count": 2,
+      "statuses": [
+        "answered",
+        "answered"
+      ],
+      "tickets_before": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "tickets_after": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "created_tickets": [],
+      "modified_tickets": [],
+      "deleted_tickets": []
+    },
+    {
+      "scenario": "missing_asset",
+      "transcript": "transcripts/v4_openai_20260915T204128799731.transcript.json",
+      "artifact_version": "v4+p5ce94b364411+tcb2a07133480",
+      "turn_count": 2,
+      "statuses": [
+        "waiting_for_user",
+        "answered"
+      ],
+      "tickets_before": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "tickets_after": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "created_tickets": [],
+      "modified_tickets": [],
+      "deleted_tickets": []
+    },
+    {
+      "scenario": "correct_asset",
+      "transcript": "transcripts/v4_openai_20260915T204135765239.transcript.json",
+      "artifact_version": "v4+p5ce94b364411+tcb2a07133480",
+      "turn_count": 2,
+      "statuses": [
+        "answered",
+        "answered"
+      ],
+      "tickets_before": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "tickets_after": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "created_tickets": [],
+      "modified_tickets": [],
+      "deleted_tickets": []
+    },
+    {
+      "scenario": "ticket_update_confirm",
+      "transcript": "transcripts/v4_openai_20260915T204144770630.transcript.json",
+      "artifact_version": "v4+p5ce94b364411+tcb2a07133480",
+      "turn_count": 3,
+      "statuses": [
+        "waiting_for_user",
+        "waiting_for_user",
+        "answered"
+      ],
+      "tickets_before": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2"
+      },
+      "tickets_after": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2",
+        "LAB-FD5C7F0A.json": "8c3b646e9494a3e0757c3993242723c8ac37570c4e384e98bf8831415ce2addb"
+      },
+      "created_tickets": [
+        {
+          "ticket_id": "LAB-FD5C7F0A",
+          "summary": "VPN connection fails on LT-204",
+          "priority": "medium",
+          "asset_id": "LT-204",
+          "created_at": "2026-09-15T13:41:50.762951+00:00",
+          "source": "educational_local_mock"
+        }
+      ],
+      "modified_tickets": [],
+      "deleted_tickets": []
+    },
+    {
+      "scenario": "ticket_cancel",
+      "transcript": "transcripts/v4_openai_20260915T204152903169.transcript.json",
+      "artifact_version": "v4+p5ce94b364411+tcb2a07133480",
+      "turn_count": 2,
+      "statuses": [
+        "waiting_for_user",
+        "answered"
+      ],
+      "tickets_before": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2",
+        "LAB-FD5C7F0A.json": "8c3b646e9494a3e0757c3993242723c8ac37570c4e384e98bf8831415ce2addb"
+      },
+      "tickets_after": {
+        "LAB-1D339ACF.json": "c3d275d61b2a066379b776dc77e6dbed26f77931b4ad072cafc2b59f61146708",
+        "LAB-4EE17537.json": "b1bd631a7e5cf72ee48d6d2f0d8dcda6880ab514a2f015210dc74d6227feaa24",
+        "LAB-8ADE48ED.json": "a0c38078c4a92cb457c50ff8887bb98397cbcf2e0997b8cd6b71b3f98a96e3e8",
+        "LAB-B0A19459.json": "85b02cc9953a9739a1075592a228566c12b114695e4b5c51ad89bca3f29b339a",
+        "LAB-B3AB5B26.json": "9c0c038ad4a4678b48704c3e215a6d62283bc0eaf9dafe16a5d637cef5c837d4",
+        "LAB-DBDDA198.json": "53e0e44841204c6465d8b62c41d77659700810b4c80265ded25c630989462659",
+        "LAB-E8E08100.json": "b6130838ae2dc7e4baf023381dbb75e505831738036061c64f0ce1d6cb2d888c",
+        "LAB-FCD98E26.json": "f99eaa52812f7de21e300dc0d035559151828d2c9a51ae005c9ceabeec95bac2",
+        "LAB-FD5C7F0A.json": "8c3b646e9494a3e0757c3993242723c8ac37570c4e384e98bf8831415ce2addb"
+      },
+      "created_tickets": [],
+      "modified_tickets": [],
+      "deleted_tickets": []
+    }
+  ],
+  "verification": {
+    "report_scenarios": [
+      "normal_scoped",
+      "missing_asset",
+      "correct_asset",
+      "ticket_update_confirm",
+      "ticket_cancel"
+    ],
+    "turn_count": 11,
+    "provider_error_turns": 0,
+    "answered_turns": 7,
+    "answered_with_required_json_fields": 1,
+    "tool_result_errors": [
+      {
+        "scenario": "correct_asset",
+        "turn": 2,
+        "error": "asset_not_found"
+      }
+    ],
+    "artifact_hashes_match_current_v4": true,
+    "ticket_payload_matches_filesystem": true,
+    "report_has_five_scenarios_and_valid_links": true,
+    "credential_scan": "No loaded credential values or OpenAI key patterns found in reviewed files."
+  }
+}
