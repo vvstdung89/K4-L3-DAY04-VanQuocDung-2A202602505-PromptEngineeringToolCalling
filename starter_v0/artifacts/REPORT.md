@@ -56,10 +56,15 @@ Trợ lý IT Helpdesk nội bộ (Northstar Labs, dữ liệu giả lập): ki�
 
 ## A4. Kịch bản demo đã rehearse
 
+5 tình huống bên dưới đã chạy thật với v4 (`openai / gpt-4o-mini`), chi tiết đầy đủ ở B4. Cột "Cải thiện version" trỏ về version trong B1 đã fix hành vi liên quan tới tình huống đó.
 
 | Scenario | Tool trace cần thấy | Cải thiện version | Fallback run/transcript |
 | -------- | ------------------- | ----------------- | ----------------------- |
-|          |                     |                   |                         |
+| 1. Kiểm tra VPN và tìm hướng dẫn Outlook | `check_service_status(vpn, production)` → `inspect_device(LT-204, check=vpn)` → `search_kb(category=vpn)` rồi `search_kb(category=email)` | v3 (Scope arguments: bắt buộc truyền rõ `check`/`category`, ánh xạ Outlook→email) | [transcript](../transcripts/v4_openai_20260915T204117882904.transcript.json) |
+| 2. Thiếu asset ID rồi bổ sung LT-204 | `clarify(response_type=text)` → `inspect_device(LT-204, check=vpn)` | v1 (rule missing-info: chỉ hỏi lại, không đoán mã máy) | [transcript](../transcripts/v4_openai_20260915T204128799731.transcript.json) |
+| 3. Sửa asset ID từ LT-204 sang LT-205 | `inspect_device(LT-204)` → `inspect_device(LT-205)`, dùng đúng ID mới nhất | v4 (rule latest-turn-only cho hội thoại nhiều lượt) | [transcript](../transcripts/v4_openai_20260915T204135765239.transcript.json) |
+| 4. Đổi priority rồi xác nhận tạo ticket | `clarify(yes_no)` cho high → hỏi lại cho medium → `create_ticket(priority=medium, confirmed=true)` | v2 (Confirm before write actions: đổi payload thì xác nhận cũ hết hiệu lực) | [transcript](../transcripts/v4_openai_20260915T204144770630.transcript.json) |
+| 5. Hủy yêu cầu tạo ticket | `clarify(yes_no)` → không gọi `create_ticket` khi user hủy | v2 (Confirm before write actions: chỉ ghi sau xác nhận đúng) | [transcript](../transcripts/v4_openai_20260915T204152903169.transcript.json) |
 
 
 # PHẦN B — Chi tiết và evidence
@@ -220,7 +225,7 @@ Link các mục INDIVIDUAL:
 - [Đào Quang Thái Anh — 2A202602987](../../TEAM.md#đào-quang-thái-anh--2a202602987)
 - [Nguyễn Đức Thịnh — 2A202602468](../../TEAM.md#nguyễn-đức-thịnh--2a202602468)
 - [Văn Quốc Dũng — 2A202602505](../../TEAM.md#văn-quốc-dũng--2a202602505)
-- Lương Sỹ Khánh — 2A202602715: chưa có mục INDIVIDUAL trong TEAM.md.
+- [Lương Sỹ Khánh — 2A202602715](../../TEAM.md#lương-sỹ-khánh--2a202602715)
 
 ## C3. Final checkout
 
@@ -230,7 +235,7 @@ repository chung:
 - [x] `TEAM.md` có đủ họ tên, MSSV, GitHub username và vai trò.
 - [x] Mỗi thành viên có ít nhất một commit trong lịch sử branch nộp bài.
 - [x] Phần nhận xét chung trong TEAM.md đã hoàn thành và có evidence.
-- [ ] Mỗi thành viên đã tự viết và commit mục INDIVIDUAL trong TEAM.md. Còn thiếu phần của Lương Sỹ Khánh.
+- [x] Mỗi thành viên đã tự viết và commit mục INDIVIDUAL trong TEAM.md.
 - [x] `system_prompt.md`, `tools.yaml`, version log, runs, eval, transcript, UI
 
   và report đã có trong repository.
